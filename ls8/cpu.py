@@ -7,7 +7,19 @@ class CPU:
 
     def __init__(self):
         """Construct a new CPU."""
-        pass
+        # 256-byte RAM, each element is 1 byte (can only store integers 0-255)
+        self.ram = [0] * 256
+
+        # R0-R7: 8-bit general purpose registers, R5 = interrupt mask (IM), 
+        # R6 = interrupt status (IS), R7 = stack pointer (SP)
+        self.reg = [0] * 8
+
+        # Internal Registers
+        self.pc = 0 # Program Counter: address of the currently executing instruction
+        self.ir = 0 # Instruction Register: contains a copy of the currently executing instruction
+        self.mar = 0 # Memory Address Register: holds the memory address we're reading or writing
+        self.mdr = 0 # Memory Data Register: holds the value to write or the value just read
+        self.fl = 0 # Flag Register: holds the current flags status
 
     def load(self):
         """Load a program into memory."""
@@ -63,3 +75,16 @@ class CPU:
     def run(self):
         """Run the CPU."""
         pass
+    
+    def ram_read(self, mar):
+        if mar >= 0 and mar < len(self.ram):
+            return self.ram[mar]
+        else:
+            print(f"Error: Attempted to read from memory address: {mar}, which is outside of the memory bounds.")
+            return -1
+
+    def ram_write(self, mar, mdr):
+        if mar >= 0 and mar < len(self.ram):
+            self.ram[mar] = mdr & 0xFF
+        else:
+            print(f"Error: Attempted to write to memory address: {mar}, which is outside of the memory bounds.")
